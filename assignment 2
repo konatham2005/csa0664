@@ -1,0 +1,558 @@
+1. #include <stdio.h>
+
+// Function to find the maximum area of water a container can store
+int maxArea(int* height, int heightSize) {
+    int left = 0;                  // Initialize left pointer at the beginning
+    int right = heightSize - 1;    // Initialize right pointer at the end
+    int max_area = 0;              // Variable to store the maximum area found
+
+    while (left < right) {
+        // Calculate the area between the lines at the left and right pointers
+        int width = right - left;
+        int current_height = (height[left] < height[right]) ? height[left] : height[right];
+        int current_area = width * current_height;
+
+        // Update the maximum area if the current area is larger
+        if (current_area > max_area) {
+            max_area = current_area;
+        }
+
+        // Move the pointer pointing to the shorter line inward
+        if (height[left] < height[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+
+    return max_area;
+}
+
+// Main function to test the maxArea function
+int main() {
+    int height[] = {1, 8, 6, 2, 5, 4, 8, 3, 7};  // Example input
+    int heightSize = sizeof(height) / sizeof(height[0]);
+
+    int result = maxArea(height, heightSize);
+    printf("The maximum amount of water the container can store is: %d\n", result);
+
+    return 0;
+}
+2. #include <stdio.h>
+#include <string.h>
+
+void intToRoman(int num, char *roman) {
+    int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    char *symbols[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+
+    roman[0] = '\0';
+
+    for (int i = 0; i < 13; i++) {
+        while (num >= values[i]) {
+            num -= values[i];        
+            strcat(roman, symbols[i]); 
+        }
+    }
+}
+
+int main() {
+    int num; 
+    char roman[20]; 
+    num = 3;
+    intToRoman(num, roman);
+    printf("The Roman numeral for %d is: %s\n", num, roman);
+    num = 58;
+    intToRoman(num, roman);
+    printf("The Roman numeral for %d is: %s\n", num, roman);
+    num = 1994;
+    intToRoman(num, roman);
+    printf("The Roman numeral for %d is: %s\n", num, roman);
+
+    return 0;
+}
+3. #include <stdio.h>
+#include <string.h>
+
+// Function to get the value of a Roman numeral character
+int value(char r) {
+    switch(r) {
+        case 'I': return 1;
+        case 'V': return 5;
+        case 'X': return 10;
+        case 'L': return 50;
+        case 'C': return 100;
+        case 'D': return 500;
+        case 'M': return 1000;
+        default: return 0;
+    }
+}
+
+// Function to convert a Roman numeral to an integer
+int romanToInt(char *s) {
+    int total = 0;
+    int prev_value = 0;
+    int length = strlen(s);
+
+    for(int i = length - 1; i >= 0; i--) {
+        int current_value = value(s[i]);
+
+        if(current_value < prev_value) {
+            total -= current_value;
+        } else {
+            total += current_value;
+        }
+
+        prev_value = current_value;
+    }
+
+    return total;
+}
+
+int main() {
+    // Example 1
+    char s1[] = "III";
+    printf("The integer value of %s is: %d\n", s1, romanToInt(s1));
+
+    // Example 2
+    char s2[] = "LVIII";
+    printf("The integer value of %s is: %d\n", s2, romanToInt(s2));
+
+    // Example 3
+    char s3[] = "MCMXCIV";
+    printf("The integer value of %s is: %d\n", s3, romanToInt(s3));
+
+    return 0;
+}
+4. #include <stdio.h>
+#include <string.h>
+
+// Function to find the minimum length string in the array
+int findMinLength(char** strs, int strsSize) {
+    int minLength = strlen(strs[0]);
+    for (int i = 1; i < strsSize; i++) {
+        int length = strlen(strs[i]);
+        if (length < minLength) {
+            minLength = length;
+        }
+    }
+    return minLength;
+}
+
+// Function to find the longest common prefix
+char* longestCommonPrefix(char** strs, int strsSize) {
+    if (strsSize == 0) {
+        return "";
+    }
+    
+    int minLength = findMinLength(strs, strsSize);
+    static char prefix[201];
+    int prefixLength = 0;
+    
+    for (int i = 0; i < minLength; i++) {
+        char currentChar = strs[0][i];
+        for (int j = 1; j < strsSize; j++) {
+            if (strs[j][i] != currentChar) {
+                prefix[prefixLength] = '\0';
+                return prefix;
+            }
+        }
+        prefix[prefixLength++] = currentChar;
+    }
+    
+    prefix[prefixLength] = '\0';
+    return prefix;
+}
+
+int main() {
+    // Example 1
+    char* strs1[] = {"flower", "flow", "flight"};
+    int strsSize1 = sizeof(strs1) / sizeof(strs1[0]);
+    printf("Longest common prefix: %s\n", longestCommonPrefix(strs1, strsSize1));
+
+    // Example 2
+    char* strs2[] = {"dog", "racecar", "car"};
+    int strsSize2 = sizeof(strs2) / sizeof(strs2[0]);
+    printf("Longest common prefix: %s\n", longestCommonPrefix(strs2, strsSize2));
+    
+    return 0;
+}
+5. #include <stdio.h>
+#include <stdlib.h>
+
+// Function to compare two integers (for qsort)
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+// Function to find all unique triplets in the array that sum up to zero
+void threeSum(int* nums, int numsSize) {
+    // Sort the array
+    qsort(nums, numsSize, sizeof(int), compare);
+
+    for (int i = 0; i < numsSize - 2; i++) {
+        // Avoid duplicates for the first number
+        if (i > 0 && nums[i] == nums[i - 1]) {
+            continue;
+        }
+        
+        int left = i + 1;
+        int right = numsSize - 1;
+
+        while (left < right) {
+            int sum = nums[i] + nums[left] + nums[right];
+
+            if (sum == 0) {
+                printf("[%d, %d, %d]\n", nums[i], nums[left], nums[right]);
+
+                // Avoid duplicates for the second and third numbers
+                while (left < right && nums[left] == nums[left + 1]) {
+                    left++;
+                }
+                while (left < right && nums[right] == nums[right - 1]) {
+                    right--;
+                }
+
+                left++;
+                right--;
+            } else if (sum < 0) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+}
+
+int main() {
+    // Example input
+    int nums[] = {-1, 0, 1, 2, -1, -4};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+
+    // Find and print the triplets
+    printf("Unique triplets that sum up to zero:\n");
+    threeSum(nums, numsSize);
+
+    return 0;
+}
+6. #include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int threeSumClosest(int* nums, int numsSize, int target) {
+    qsort(nums, numsSize, sizeof(int), compare);
+
+    int closestSum = nums[0] + nums[1] + nums[2]; 
+
+    for (int i = 0; i < numsSize - 2; i++) {
+        int left = i + 1;
+        int right = numsSize - 1;
+
+        while (left < right) {
+            int currentSum = nums[i] + nums[left] + nums[right];
+
+            if (abs(currentSum - target) < abs(closestSum - target)) {
+                closestSum = currentSum;
+            }
+
+            if (currentSum < target) {
+                left++;
+            } else if (currentSum > target) {
+                right--;
+            } else {
+                return currentSum;
+            }
+        }
+    }
+
+    return closestSum;
+}
+
+int main() {
+    int nums1[] = {-1, 2, 1, -4};
+    int target1 = 1;
+    int result1 = threeSumClosest(nums1, sizeof(nums1) / sizeof(nums1[0]), target1);
+    printf("The sum closest to %d is: %d\n", target1, result1);
+
+    int nums2[] = {0, 0, 0};
+    int target2 = 1;
+    int result2 = threeSumClosest(nums2, sizeof(nums2) / sizeof(nums2[0]), target2);
+    printf("The sum closest to %d is: %d\n", target2, result2);
+
+    return 0;
+}
+7. #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+const char* phoneMap[] = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+// Function to find all combinations recursively
+void backtrack(char** result, int* returnSize, char* combination, int index, const char* digits) {
+    if (digits[index] == '\0') {
+        result[*returnSize] = strdup(combination);
+        (*returnSize)++;
+        return;
+    }
+
+    const char* letters = phoneMap[digits[index] - '0'];
+    for (int i = 0; letters[i] != '\0'; i++) {
+        combination[index] = letters[i];
+        backtrack(result, returnSize, combination, index + 1, digits);
+    }
+}
+
+// Main function to find letter combinations of a phone number
+char** letterCombinations(char* digits, int* returnSize) {
+    *returnSize = 0;
+    if (digits[0] == '\0') {
+        return NULL;
+    }
+
+    int maxCombinations = 1;
+    for (int i = 0; digits[i] != '\0'; i++) {
+        maxCombinations *= strlen(phoneMap[digits[i] - '0']);
+    }
+
+    char** result = (char*)malloc(maxCombinations * sizeof(char));
+    char* combination = (char*)malloc((strlen(digits) + 1) * sizeof(char));
+    combination[strlen(digits)] = '\0';
+
+    backtrack(result, returnSize, combination, 0, digits);
+
+    free(combination);
+    return result;
+}
+
+int main() {
+    char digits[] = "23";
+    int returnSize;
+    char** combinations = letterCombinations(digits, &returnSize);
+
+    printf("Combinations for %s:\n", digits);
+    for (int i = 0; i < returnSize; i++) {
+        printf("%s\n", combinations[i]);
+        free(combinations[i]);
+    }
+    free(combinations);
+
+    return 0;
+}
+8. #include <stdio.h>
+#include <stdlib.h>
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int** fourSum(int* nums, int numsSize, int target, int* returnSize, int** returnColumnSizes) {
+    qsort(nums, numsSize, sizeof(int), compare);
+
+    int maxResultSize = 20000; 
+    int** result = (int*)malloc(maxResultSize * sizeof(int));
+    returnColumnSizes = (int)malloc(maxResultSize * sizeof(int));
+    *returnSize = 0;
+
+    for (int i = 0; i < numsSize - 3; i++) {
+        if (i > 0 && nums[i] == nums[i - 1]) {
+            continue;
+        }
+
+        for (int j = i + 1; j < numsSize - 2; j++) {
+            if (j > i + 1 && nums[j] == nums[j - 1]) {
+                continue;
+            }
+
+            int left = j + 1;
+            int right = numsSize - 1;
+
+            while (left < right) {
+                int sum = nums[i] + nums[j] + nums[left] + nums[right];
+
+                if (sum == target) {
+                    result[returnSize] = (int)malloc(4 * sizeof(int));
+                    result[*returnSize][0] = nums[i];
+                    result[*returnSize][1] = nums[j];
+                    result[*returnSize][2] = nums[left];
+                    result[*returnSize][3] = nums[right];
+                    (*returnColumnSizes)[*returnSize] = 4;
+                    (*returnSize)++;
+
+                    while (left < right && nums[left] == nums[left + 1]) {
+                        left++;
+                    }
+                    while (left < right && nums[right] == nums[right - 1]) {
+                        right--;
+                    }
+
+                    left++;
+                    right--;
+                } else if (sum < target) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    int nums1[] = {1, 0, -1, 0, -2, 2};
+    int numsSize1 = sizeof(nums1) / sizeof(nums1[0]);
+    int target1 = 0;
+    int returnSize1;
+    int* returnColumnSizes1;
+    int** result1 = fourSum(nums1, numsSize1, target1, &returnSize1, &returnColumnSizes1);
+    printf("Unique quadruplets for Example 1:\n");
+    for (int i = 0; i < returnSize1; i++) {
+        printf("[%d,%d,%d,%d]\n", result1[i][0], result1[i][1], result1[i][2], result1[i][3]);
+        free(result1[i]); 
+    }
+    free(result1); 
+    free(returnColumnSizes1); 
+
+    int nums2[] = {2, 2, 2, 2, 2};
+    int numsSize2 = sizeof(nums2) / sizeof(nums2[0]);
+    int target2 = 8;
+    int returnSize2;
+    int* returnColumnSizes2;
+    int** result2 = fourSum(nums2, numsSize2, target2, &returnSize2, &returnColumnSizes2);
+    printf("Unique quadruplets for Example 2:\n");
+    for (int i = 0; i < returnSize2; i++) {
+        printf("[%d,%d,%d,%d]\n", result2[i][0], result2[i][1], result2[i][2], result2[i][3]);
+        free(result2[i]); 
+    }
+    free(result2); 
+    free(returnColumnSizes2); 
+
+    return 0;
+}
+9. #include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* removeNthFromEnd(struct ListNode* head, int n) {
+    struct ListNode* dummy = (struct ListNode*)malloc(sizeof(struct ListNode));
+    dummy->next = head;
+    
+    struct ListNode* fast = dummy;
+    struct ListNode* slow = dummy;
+    
+    for (int i = 0; i <= n; i++) {
+        fast = fast->next;
+    }
+    
+    while (fast != NULL) {
+        fast = fast->next;
+        slow = slow->next;
+    }
+    
+    struct ListNode* temp = slow->next;
+    slow->next = slow->next->next;
+    free(temp);
+    
+    return dummy->next;
+}
+
+int main() {
+    struct ListNode* head = (struct ListNode*)malloc(sizeof(struct ListNode));
+    head->val = 1;
+    head->next = (struct ListNode*)malloc(sizeof(struct ListNode));
+    head->next->val = 2;
+    head->next->next = (struct ListNode*)malloc(sizeof(struct ListNode));
+    head->next->next->val = 3;
+    head->next->next->next = (struct ListNode*)malloc(sizeof(struct ListNode));
+    head->next->next->next->val = 4;
+    head->next->next->next->next = (struct ListNode*)malloc(sizeof(struct ListNode));
+    head->next->next->next->next->val = 5;
+    head->next->next->next->next->next = NULL;
+
+    int n = 2;
+    
+    struct ListNode* result = removeNthFromEnd(head, n);
+
+    while (result != NULL) {
+        printf("%d ", result->val);
+        result = result->next;
+    }
+    printf("\n");
+
+    return 0;
+}
+10. #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+// Structure to represent a stack
+struct Stack {
+    char* array;
+    int top;
+};
+
+// Function to initialize the stack
+struct Stack* createStack(int size) {
+    struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+    stack->array = (char*)malloc(size * sizeof(char));
+    stack->top = -1;
+    return stack;
+}
+
+// Function to push an element onto the stack
+void push(struct Stack* stack, char value) {
+    stack->array[++stack->top] = value;
+}
+
+// Function to pop an element from the stack
+char pop(struct Stack* stack) {
+    return stack->array[stack->top--];
+}
+
+// Function to check if the string of parentheses is valid
+bool isValid(char* s) {
+    struct Stack* stack = createStack(strlen(s));
+    int i = 0;
+    
+    while (s[i] != '\0') {
+        if (s[i] == '(' || s[i] == '[' || s[i] == '{') {
+            push(stack, s[i]);
+        } else {
+            if (stack->top == -1) {
+                return false;
+            }
+            char topElement = pop(stack);
+            if ((s[i] == ')' && topElement != '(') ||
+                (s[i] == ']' && topElement != '[') ||
+                (s[i] == '}' && topElement != '{')) {
+                return false;
+            }
+        }
+        i++;
+    }
+    
+    return stack->top == -1;
+}
+
+int main() {
+    // Example 1
+    char s1[] = "()";
+    printf("Example 1: %s\n", isValid(s1) ? "true" : "false");
+
+    // Example 2
+    char s2[] = "()[]{}";
+    printf("Example 2: %s\n", isValid(s2) ? "true" : "false");
+
+    // Example 3
+    char s3[] = "(]";
+    printf("Example 3: %s\n", isValid(s3) ? "true" : "false");
+
+    return 0;
+}
